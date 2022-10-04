@@ -4,29 +4,39 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts-upgradeable/governance/GovernorUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/governance/extensions/GovernorSettingsUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/governance/compatibility/GovernorCompatibilityBravoUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/governance/extensions/GovernorVotesCompUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/governance/extensions/GovernorVotesUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/governance/extensions/GovernorTimelockControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-contract YatDAO is Initializable, GovernorUpgradeable, GovernorSettingsUpgradeable, GovernorCompatibilityBravoUpgradeable, GovernorVotesCompUpgradeable, GovernorTimelockControlUpgradeable {
+contract YatDAO is Initializable, GovernorUpgradeable, GovernorSettingsUpgradeable, GovernorCompatibilityBravoUpgradeable, GovernorVotesUpgradeable, GovernorTimelockControlUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
     }
 
-    function initialize(ERC20VotesCompUpgradeable _token, TimelockControllerUpgradeable _timelock)
+    function initialize(IVotesUpgradeable _token, TimelockControllerUpgradeable _timelock)
         initializer public
     {
         __Governor_init("YatDAO");
-        __GovernorSettings_init(1 /* 1 block */, 45818 /* 1 week */, 1e18);
+        __GovernorSettings_init(1 /* 1 block */, 45818 /* 1 week */, 0);
         __GovernorCompatibilityBravo_init();
-        __GovernorVotesComp_init(_token);
+        __GovernorVotes_init(_token);
         __GovernorTimelockControl_init(_timelock);
+        __Ownable_init();
+        __UUPSUpgradeable_init();
     }
 
     function quorum(uint256 blockNumber) public pure override returns (uint256) {
         return 3e18;
     }
+
+    function _authorizeUpgrade(address newImplementation)
+        internal
+        onlyOwner
+        override
+    {}
 
     // The following functions are overrides required by Solidity.
 

@@ -11,6 +11,10 @@ import './tasks/deploy';
 
 dotenv.config();
 
+const privateKey = process.env.PRIVATE_KEY;
+const endpoint = process.env.INFURA_GOERLI_URL;
+const etherscanKey = process.env.ETHERSCAN_KEY
+
 const config: HardhatUserConfig = {
   solidity: '0.8.4',
   paths: {
@@ -23,20 +27,24 @@ const config: HardhatUserConfig = {
         interval: 1000
       }
     },
-    ropsten: {
-      url: process.env.ROPSTEN_URL || '',
-      accounts:
-        process.env.TEST_ETH_ACCOUNT_PRIVATE_KEY !== undefined
-          ? [process.env.TEST_ETH_ACCOUNT_PRIVATE_KEY]
-          : []
+    goerli: {
+      url: endpoint,
+      accounts: [`0x${privateKey}`]
     }
+    // goerli: {
+    //   url: process.env.GOERLI_URL || '',
+    //   accounts:
+    //     process.env.TEST_ETH_ACCOUNT_PRIVATE_KEY !== undefined
+    //       ? [process.env.TEST_ETH_ACCOUNT_PRIVATE_KEY]
+    //       : []
+    // }
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
     currency: 'USD'
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY
+    apiKey: etherscanKey
   }
 };
 
