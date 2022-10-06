@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
 contract GovernanceYDAO is ERC20, ERC20Permit, ERC20Votes {
+
+    uint256 public x = 0;
     constructor() ERC20("gYDAO", "GYD") ERC20Permit("gYDAO") {}
 
     // The functions below are overrides required by Solidity.
@@ -29,5 +31,9 @@ contract GovernanceYDAO is ERC20, ERC20Permit, ERC20Votes {
         override(ERC20, ERC20Votes)
     {
         super._burn(account, amount);
+    }
+
+    function mmm(uint256 xx) public {
+        x = xx;
     }
 }

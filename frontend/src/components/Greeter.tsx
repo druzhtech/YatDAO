@@ -102,7 +102,7 @@ export function Greeter(): ReactElement {
 
         await greeterContract.deployed();
 
-        const greeting = await greeterContract.greet();
+        const greeting = await greeterContract.name();
 
         setGreeterContract(greeterContract);
         setGreeting(greeting);
@@ -139,8 +139,9 @@ export function Greeter(): ReactElement {
     }
 
     async function submitGreeting(greeterContract: Contract): Promise<void> {
+      
       try {
-        const setGreetingTxn = await greeterContract.setGreeting(greetingInput);
+        const setGreetingTxn = await greeterContract.setGreeting(123);
 
         await setGreetingTxn.wait();
 
