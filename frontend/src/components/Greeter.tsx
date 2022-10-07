@@ -8,7 +8,7 @@ import {
   useState
 } from 'react';
 import styled from 'styled-components';
-import GreeterArtifact from '../artifacts/contracts/Greeter.sol/Greeter.json';
+import GreeterArtifact from '../artifacts/contracts/YatDAO.sol/YatDAO.json';
 import { Provider } from '../utils/provider';
 import { SectionDivider } from './SectionDivider';
 

@@ -6,6 +6,7 @@ import '@openzeppelin/contracts/access/IAccessControl.sol';
 
 contract EduDAO is AccessControlEnumerable {
   // TODO: проверить на возможность использования eтгь как типа участника в EnmerableSet
+
   enum Roles {
     Student,
     Teacher,
@@ -16,6 +17,7 @@ contract EduDAO is AccessControlEnumerable {
     address acc; // зачем адрес
     bytes32[] set; // студ.групп, команда проекта, сообщество
   }
+
   mapping(address => Participant) participants;
 
   struct Task {
@@ -28,10 +30,17 @@ contract EduDAO is AccessControlEnumerable {
     bytes32 type_participant;
     bool requiremtnts;
   }
-  mapping(bytes32 => Task) tasks;
+
+  mapping(uint256 => Task) tasks;
+
+  uint256[] taskIds;
+
+  event TaskCreated(uint256 index, bytes32 task_name);
 
   constructor() {
-    super._setRoleAdmin('gov', 'gov'); // TODO: протестировать конструктор + протестировать перевод типа из enym, в инеуы32
+    super._setupRole('gov', msg.sender);
+    super._setRoleAdmin('gov', 'gov'); // TODO: протестировать перевод типа из enym, в инеуы32
+    taskIds[0] = 0;
   }
 
   function getRoleMember(bytes32 role, uint256 index)
@@ -63,7 +72,7 @@ contract EduDAO is AccessControlEnumerable {
   }
 
   function setRoleAdmin(bytes32 role, bytes32 adminRole)
-    internal
+    public
     onlyRole('gov')
   {
     super._setRoleAdmin(role, adminRole);
@@ -99,6 +108,9 @@ contract EduDAO is AccessControlEnumerable {
       requiremtnts
     );
 
-    tasks[] = ts; // TODO: создать перечисление (index)
+    uint256 tskIndx = taskIds.length + 1;
+    tasks[tskIndx] = ts; // TODO: создать перечисление (index)
+
+    emit TaskCreated(tskIndx, task_name);
   }
 }
