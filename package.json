@@ -1,8 +1,8 @@
 {
-  "name": "hardhat-ethers-react-ts-starter",
+  "name": "YatDAO",
   "version": "0.1.0",
   "license": "MIT",
-  "description": "Typescript starter template for hardhat, ethers and react projects using typescript and @web3-react",
+  "description": "",
   "engines": {
     "node": "^16.13.1",
     "npm": "8.1.2"

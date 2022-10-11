@@ -1,15 +1,23 @@
 import '@nomiclabs/hardhat-waffle';
-import { ethers } from 'ethers';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 
-task('deploy', 'Deploy Greeter contract').setAction(
+task('deploy', 'Deploy gYDAO contract').setAction(
   async (_, hre: HardhatRuntimeEnvironment): Promise<void> => {
-
-    const Greeter = await hre.ethers.getContractFactory('gEDAO');
+    const GYDAO = await hre.ethers.getContractFactory('gYDAO');
     // @ts-ignore
-    const greeter = await Greeter.deploy();
-    await greeter.deployed();
-    console.log('Greeter deployed to:', greeter.address);
+    const gYDAO = await GYDAO.deploy();
+    await gYDAO.deployed();
+    console.log('gYDAO deployed to:', gYDAO.address);
+  }
+);
+
+task('deploy', 'Deploy EduDAO contract').setAction(
+  async (_, hre: HardhatRuntimeEnvironment): Promise<void> => {
+    const EDAO = await hre.ethers.getContractFactory('EduDAO');
+    // @ts-ignore
+    const eDAO = await EDAO.deploy();
+    await eDAO.deployed();
+    console.log('eDAO deployed to:', eDAO.address);
   }
 );

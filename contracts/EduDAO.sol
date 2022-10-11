@@ -3,6 +3,8 @@ pragma solidity ^0.8.2;
 import '@openzeppelin/contracts/access/AccessControlEnumerable.sol';
 import '@openzeppelin/contracts/access/AccessControl.sol';
 import '@openzeppelin/contracts/access/IAccessControl.sol';
+import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
 contract EduDAO is AccessControlEnumerable {
   // TODO: проверить на возможность использования eтгь как типа участника в EnmerableSet
@@ -14,11 +16,16 @@ contract EduDAO is AccessControlEnumerable {
   }
 
   struct Participant {
-    address acc; // зачем адрес
     bytes32[] set; // студ.групп, команда проекта, сообщество
+    Roles[] roles;
   }
 
   mapping(address => Participant) participants;
+  uint256[] participantIdx;
+
+  event ParticipantAdded(address indexed who, bytes32[] set, Roles[] role);
+
+  event Erc20TokenSended(address recipient, address token, uint256 amount);
 
   struct Task {
     bytes32 task_name;
@@ -40,7 +47,7 @@ contract EduDAO is AccessControlEnumerable {
   constructor() {
     super._setupRole('gov', msg.sender);
     super._setRoleAdmin('gov', 'gov'); // TODO: протестировать перевод типа из enym, в инеуы32
-    taskIds[0] = 0;
+    // taskIds[0] = 1;
   }
 
   function getRoleMember(bytes32 role, uint256 index)
@@ -112,5 +119,44 @@ contract EduDAO is AccessControlEnumerable {
     tasks[tskIndx] = ts; // TODO: создать перечисление (index)
 
     emit TaskCreated(tskIndx, task_name);
+  }
+
+  function addParticipant(
+    address participant_addr,
+    bytes32[] memory set,
+    Roles[] memory role
+  ) public onlyRole('gov') {
+    Participant memory part = Participant(set, role);
+    participants[participant_addr] = part;
+
+    emit ParticipantAdded(participant_addr, set, role);
+  }
+
+  function getParticipants() public returns (Participant[] memory parts){
+
+  }
+
+  function addErc20Token(
+    address recipient,
+    address _token,
+    uint256 amount
+  ) public onlyRole('gov') {
+    require(address(_token) != address(0x0), "Address of token can't be 0x0");
+    require(
+      address(recipient) != address(0x0),
+      "Address of recipient can't be 0x0"
+    );
+    ERC20 token = ERC20(_token);
+    require(token.balanceOf(msg.sender) >= amount, 'No such amount');
+
+    bool isApproved = token.approve(address(this), amount);
+
+    if (isApproved) {
+      bool sended = token.transferFrom(msg.sender, recipient, amount);
+
+      if (sended) {
+        emit Erc20TokenSended(recipient, _token, amount);
+      }
+    }
   }
 }

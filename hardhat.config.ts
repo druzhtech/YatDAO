@@ -13,10 +13,18 @@ dotenv.config();
 
 const privateKey = process.env.PRIVATE_KEY;
 const endpoint = process.env.INFURA_GOERLI_URL;
-const etherscanKey = process.env.ETHERSCAN_KEY
+const etherscanKey = process.env.ETHERSCAN_KEY;
 
 const config: HardhatUserConfig = {
-  solidity: '0.8.4',
+  solidity: {
+    version: '0.8.4',
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 1000
+      }
+    }
+  },
   paths: {
     artifacts: './frontend/src/artifacts'
   },
