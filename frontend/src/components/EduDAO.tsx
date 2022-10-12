@@ -59,7 +59,6 @@ export function EduDAO(): ReactElement {
   const [erc20Token, seterc20Token] = useState<string>('');
   const [amount, setAmount] = useState<string>('');
 
-
   useEffect((): void => {
     if (!library) {
       setSigner(undefined);
@@ -87,11 +86,13 @@ export function EduDAO(): ReactElement {
 
     async function deployGreeterContract(): Promise<void> {
 
-      const EduDAO = new ethers.Contract("0x21fdcAd37a9CFd4d0a2af22908170d14EaF800e1", EduDAOArtifact.abi, signer)
+      const EduDAO = new ethers.Contract("0x2d1a265ad607bA61aF936328602d0C6Bd026A4F3", EduDAOArtifact.abi, signer);
+
+      console.log("provider: ", context)
 
       try {
         setEduDAOContract(EduDAO);
-        window.alert(`Greeter deployed to: ${EduDAO.address}`);
+        window.alert(`EduDAO deployed to: ${EduDAO.address}`);
         setEduDAOContractAddr(EduDAO.address);
       } catch (error: any) {
         window.alert(
@@ -108,20 +109,15 @@ export function EduDAO(): ReactElement {
     setParticipantAddress(event.target.value);
   }
 
-
-
   function handleErc20Chanege(event: ChangeEvent<HTMLInputElement>): void {
     event.preventDefault();
     seterc20Token(event.target.value);
   }
 
-
-
   function handleAmountChanege(event: ChangeEvent<HTMLInputElement>): void {
     event.preventDefault();
     setAmount(event.target.value);
   }
-
 
   function handleAddTokenSubmit(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
@@ -136,20 +132,23 @@ export function EduDAO(): ReactElement {
       return;
     }
 
-    async function submitAddToken(eduDaoContract: Contract): Promise<void> {
 
-      try {
-        const setGreetingTxn = await eduDaoContract.addErc20Token(participantAddr, erc20Token, amount);
-        await setGreetingTxn.wait();
+    async function submitAddToken(eduDaoContract: Contract): Promise<void> {
+      const estimation = await eduDaoContract.estimateGas.addErc20Token(participantAddr, erc20Token, amount, {gasLimit: 5000000});
+      console.log("estimation: ", Number(estimation));
+
+      // try {
+        const setAddtokenTxn = await eduDaoContract.addErc20Token(participantAddr, erc20Token, amount, {gasLimit: estimation});
+        await setAddtokenTxn.wait();
 
         // if (newGreeting !== eduDaoContractAddr) {
         //   setParticipants(newGreeting);
         // }
-      } catch (error: any) {
-        window.alert(
-          'Error!' + (error && error.message ? `\n\n${error.message}` : '')
-        );
-      }
+      // } catch (error: any) {
+      //   window.alert(
+      //     'Error!' + (error && error.message ? `\n\n${error.message}` : '')
+      //   );
+      // }
     }
 
     submitAddToken(eduDaoContract);
