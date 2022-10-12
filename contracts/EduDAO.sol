@@ -132,31 +132,34 @@ contract EduDAO is AccessControlEnumerable {
     emit ParticipantAdded(participant_addr, set, role);
   }
 
-  function getParticipants() public returns (Participant[] memory parts){
+  function getParticipants() public returns (Participant[] memory parts) {}
 
-  }
-
+  // Add Rating - gYEDAO
+  // TODO: type of token: gov, allocation, rating
   function addErc20Token(
     address recipient,
     address _token,
     uint256 amount
-  ) public onlyRole('gov') {
-    require(address(_token) != address(0x0), "Address of token can't be 0x0");
-    require(
-      address(recipient) != address(0x0),
-      "Address of recipient can't be 0x0"
-    );
+  ) public 
+  // onlyRole('gov')
+   {
+    // require(address(_token) != address(0x0), "Address of token can't be 0x0");
+    // require(
+    //   address(recipient) != address(0x0),
+    //   "Address of recipient can't be 0x0"
+    // );
     ERC20 token = ERC20(_token);
-    require(token.balanceOf(msg.sender) >= amount, 'No such amount');
+    
+    // require(token.balanceOf(msg.sender) >= amount, 'No such amount');
 
     bool isApproved = token.approve(address(this), amount);
 
     if (isApproved) {
       bool sended = token.transferFrom(msg.sender, recipient, amount);
 
-      if (sended) {
-        emit Erc20TokenSended(recipient, _token, amount);
-      }
+      // if (sended) {
+      //   emit Erc20TokenSended(recipient, _token, amount);
+      // }
     }
   }
 }

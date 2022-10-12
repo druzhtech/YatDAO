@@ -26,7 +26,7 @@ describe('EduDAO', function (): void {
     console.log("gYDAO address: ", gYDAO.address);
 
     const balanceOwner1 = await gYDAO.balanceOf(account1.getAddress());
-    console.log("gYDAO balance owner: ", balanceOwner1);
+    console.log("gYDAO balance owner: ", Number(balanceOwner1));
 
     // let approveTx = await gYDAO.connect(account1).approve(account1.getAddress(), 100);
     // await approveTx.wait();
@@ -40,7 +40,7 @@ describe('EduDAO', function (): void {
     await mintTx.wait();
 
     const balanceOwner2 = await gYDAO.balanceOf(account1.getAddress());
-    console.log("gYDAO balance owner: ", balanceOwner2);
+    console.log("gYDAO balance owner: ", Number(balanceOwner2));
 
     console.log("\n");
 
@@ -75,6 +75,7 @@ describe('EduDAO', function (): void {
 
     const balanceAcc1 = await gYDAO.balanceOf(account1.getAddress())
     const balanceAcc2 = await gYDAO.balanceOf(account2.getAddress())
+    
     expect(Number(balanceAcc1)).to.equal(21000000);
     expect(Number(balanceAcc2)).to.equal(100);
   });

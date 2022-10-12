@@ -71,6 +71,7 @@ function Activate(): ReactElement {
     event.preventDefault();
 
     async function _activate(activate: ActivateFunction): Promise<void> {
+      console.log("activate: ", activate)
       setActivating(true);
       await activate(injected);
       setActivating(false);
