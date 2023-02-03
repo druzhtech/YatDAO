@@ -139,27 +139,54 @@ contract EduDAO is AccessControlEnumerable {
   function addErc20Token(
     address recipient,
     address _token,
-    uint256 amount
-  ) public 
-  // onlyRole('gov')
-   {
-    // require(address(_token) != address(0x0), "Address of token can't be 0x0");
-    // require(
-    //   address(recipient) != address(0x0),
-    //   "Address of recipient can't be 0x0"
-    // );
+    uint256 amount // onlyRole('gov')
+  ) public {
+    require(address(_token) != address(0x0), "Address of token can't be 0x0");
+    require(
+      address(recipient) != address(0x0),
+      "Address of recipient can't be 0x0"
+    );
+
     ERC20 token = ERC20(_token);
-    
+
+    // (bool success, bytes memory data) = _token.call(
+    //   abi.encodeWithSignature('approve(address,uint256)', _to, 777)
+    // );
+
     // require(token.balanceOf(msg.sender) >= amount, 'No such amount');
 
-    bool isApproved = token.approve(address(this), amount);
+    // bool isApproved = token.approve(address(this), amount);
 
     if (isApproved) {
       bool sended = token.transferFrom(msg.sender, recipient, amount);
 
-      // if (sended) {
-      //   emit Erc20TokenSended(recipient, _token, amount);
-      // }
+      if (sended) {
+        emit Erc20TokenSended(recipient, _token, amount);
+      }
     }
+  }
+
+  function addValuesWithDelegateCall(
+    address calculator,
+    uint256 a,
+    uint256 b
+  ) public returns (uint256) {
+    (bool success, bytes memory result) = calculator.delegatecall(
+      abi.encodeWithSignature('add(uint256,uint256)', a, b)
+    );
+    emit AddedValuesByDelegateCall(a, b, success);
+    return abi.decode(result, (uint256));
+  }
+
+  function addValuesWithCall(
+    address calculator,
+    uint256 a,
+    uint256 b
+  ) public returns (uint256) {
+    (bool success, bytes memory result) = calculator.call(
+      abi.encodeWithSignature('add(uint256,uint256)', a, b)
+    );
+    emit AddedValuesByCall(a, b, success);
+    return abi.decode(result, (uint256));
   }
 }
